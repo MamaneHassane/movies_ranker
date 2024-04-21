@@ -16,10 +16,10 @@ class MoviesService {
   MoviesService(this.apiKey);
 
   // Fonction pour charger les films
-  Future<PopularMovies> loadMovies(int pageNumber) async {
+  Future<List<Movie>> loadMovies(int pageNumber) async {
     final response = await http.get(Uri.parse("$baseUrl/movie/popular?page=$pageNumber&api_key=$apiKey"));
     if(response.statusCode == 200){
-      return PopularMovies.fromJson(jsonDecode(response.body));
+      return PopularMovies.fromJson(jsonDecode(response.body)).results;
     } else {
       throw Exception("Une erreur s'est produite lors du chargement des films");
     }
@@ -34,4 +34,12 @@ class MoviesService {
       throw Exception("Une erreur s'est produite lors du chargement du film");
     }
   }
+
+  // Fonction pour ajouter des films à la liste des films chargés
+  Future<List<Movie>> appendElements(Future<List<Movie>> listFuture, List<Movie> elementsToAdd) async {
+    final list = await listFuture;
+    list.addAll(elementsToAdd);
+    return list;
+  }
+
 }
